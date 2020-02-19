@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 /**
  * InfectStatistic
  * TODO
@@ -6,50 +10,48 @@
  * @version xxx
  * @since xxx
  */
-package com.icitic.agilecms.test;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 class InfectStatistic {
+	public class Province{
+		String name;
+		int ip;//感染患者
+		int sp;//疑似患者
+		int cp;//治愈患者
+		int dp;//死亡患者
+	}
 	
-
+	public static void getAllFileName(String path,ArrayList<String> listFileName){
+		File file = new File(path);
+		String [] names = file.list();
+		if(names != null){
+			String [] completNames = new String[names.length];
+			for(int i=0;i<names.length;i++){
+					completNames[i]=path+names[i];
+			}
+			listFileName.addAll(Arrays.asList(completNames));
+		}
+		for(String fname:listFileName) {
+			readfile(fname);
+		}
+	}
 	
-
-	    /**
-	     * 获取一个文件夹下的所有文件全路径
-	     * @param path
-	     * @param listFileName
-	     */
-	    public static void getAllFileName(String path,ArrayList<String> listFileName){
-	        File file = new File(path);
-	        File [] files = file.listFiles();
-	        String [] names = file.list();
-	        if(names != null){
-	            String [] completNames = new String[names.length];
-	            for(int i=0;i<names.length;i++){
-	                completNames[i]=path+names[i];
-	            }
-	            listFileName.addAll(Arrays.asList(completNames));
-	        }
-	        for(File a:files){
-	            if(a.isDirectory()){//如果文件夹下有子文件夹，获取子文件夹下的所有文件全路径。
-	                getAllFileName(a.getAbsolutePath()+"\\",listFileName);
-	            }
-	        }
-	    }
-
-	    public static void main(String[] args){
-	        ArrayList<String> listFileName = new ArrayList<String>(); 
-	        getAllFileName("D:\\log\\",listFileName);
-	        for(String name:listFileName){
-	            if(name.contains(".txt")||name.contains(".properties")){
-	                System.out.println(name);
-	            }
-	        }
-	    }
-
+	public static void readfile(String file) {
+		try {
+			BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
+			String str="";
+			while((str=bReader.readLine())!=null) {
+				System.out.println(str);
+			}
+		}catch (IOException e) {
+        }
+		
+	}
 	
-  
+	public static void main(String[] args){
+		ArrayList<String> listFileName = new ArrayList<String>();
+		getAllFileName("D:\\log\\",listFileName);
+//		for(String name:listFileName){
+//			System.out.println(name);
+//		}
+//		System.out.println(fujian.name);
+	}
 }
