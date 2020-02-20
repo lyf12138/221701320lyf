@@ -37,6 +37,11 @@ class InfectStatistic {
 			   0,0,0,0,0,0,0,
 			   0,0,0,0,0,0,0,
 			   0,0,0,0,0,0};
+	public static int[] pro={0,0,0,0,0,0,0,
+			   0,0,0,0,0,0,0,
+			   0,0,0,0,0,0,0,
+			   0,0,0,0,0,0,0,
+			   0,0,0,0,0,0,0};
 	
 	public static void getAllFileName(String path,ArrayList<String> listFileName){
 		File file = new File(path);
@@ -169,11 +174,80 @@ class InfectStatistic {
 	
 	public static void main(String[] args){
 		ArrayList<String> listFileName = new ArrayList<String>();
-		
-		getAllFileName("D:\\log\\",listFileName);
-		System.out.println(ip[12]);
-		System.out.println(sp[12]);
-		System.out.println(cp[12]);
-		System.out.println(dp[12]);
+		int grhz=0;
+        int yshz=0;
+        int zy=0;
+        int sw=0;
+		String address="";
+		String outaddress="";
+		int judgeprovince=0;
+		int judgetype=0;
+		for(int i=1;i<args.length;i++) {
+			if(args[i].equals("-log")) {
+				address=args[i+1];
+			}
+			if(args[i].equals("-out")) {
+				outaddress=args[i+1];
+			}
+			if(args[i].equals("-province")) {
+				for(int j=i+1;!args[j].subSequence(0, 1).toString().equals("-");j++)
+				{
+					for(int t=0;t<34;t++) {
+						if(args[j].equals(province[t])) {
+							judgeprovince++;
+							pro[t]=1;
+						}
+					}
+				}
+			}
+			if(args[i].equals("-type")) {
+				for(int j=i+1;!args[j].subSequence(0, 1).toString().equals("-");j++)
+				{
+					if(args[j].equals("ip")) {
+						grhz=1;
+						judgetype+=1;
+					}
+					if(args[j].equals("sp")) {
+						yshz=1;
+						judgetype+=1;
+					}
+					if(args[j].equals("cure")) {
+						zy=1;
+						judgetype+=1;
+					}
+					if(args[j].equals("dead")) {
+						sw=1;
+						judgetype+=1;
+					}
+				}
+			}
+		}
+		getAllFileName(address,listFileName);
+		String string="";
+		try {
+	        File writename = new File(outaddress);
+	        writename.createNewFile();
+	        BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+	        int IP=0;
+	        int SP=0;
+	        int CP=0;
+	        int DP=0;
+	        for(int i=0;i<34;i++) {
+	        	IP+=ip[i];
+	        	SP+=sp[i];
+	        	CP+=cp[i];
+	        	DP+=dp[i];
+	        }
+	        string="全国 感染患者"+IP+"人 疑似患者"+SP+"人 治愈"+CP+"人 死亡"+DP+"人\n";
+        	out.write(string); 
+	        for(int i=0;i<34;i++) {
+	        	string=province[i]+" 感染患者"+ip[i]+"人 疑似患者"+sp[i]+"人 治愈"+cp[i]+"人 死亡"+dp[i]+"人\n";
+	        	out.write(string); 
+	        }
+	        out.flush(); 
+	        out.close(); 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 }
