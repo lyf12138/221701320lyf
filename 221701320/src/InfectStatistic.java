@@ -180,6 +180,7 @@ class InfectStatistic {
         int sw=0;
 		String address="";
 		String outaddress="";
+		int quanguo=0;
 		int judgeprovince=0;
 		int judgetype=0;
 		for(int i=1;i<args.length;i++) {
@@ -190,8 +191,12 @@ class InfectStatistic {
 				outaddress=args[i+1];
 			}
 			if(args[i].equals("-province")) {
-				for(int j=i+1;!args[j].subSequence(0, 1).toString().equals("-");j++)
-				{
+				for(int j=i+1;j<args.length;j++) {
+					if(args[j].subSequence(0, 1).toString().equals("-"))break;
+					if(args[j].equals("全国")) {
+							judgeprovince++;
+							quanguo=1;
+						}
 					for(int t=0;t<34;t++) {
 						if(args[j].equals(province[t])) {
 							judgeprovince++;
@@ -201,8 +206,8 @@ class InfectStatistic {
 				}
 			}
 			if(args[i].equals("-type")) {
-				for(int j=i+1;!args[j].subSequence(0, 1).toString().equals("-");j++)
-				{
+				for(int j=i+1;j<args.length;j++) {
+					if(args[j].subSequence(0, 1).toString().equals("-"))break;
 					if(args[j].equals("ip")) {
 						grhz=1;
 						judgetype+=1;
@@ -222,6 +227,18 @@ class InfectStatistic {
 				}
 			}
 		}
+		if(judgetype==0) {
+			grhz=1;
+			yshz=1;
+			zy=1;
+			sw=1;
+		}
+		if(judgeprovince==0) {
+			quanguo=1;
+			for(int i=0;i<34;i++) {
+				pro[i]=1;
+			}
+		}
 		getAllFileName(address,listFileName);
 		String string="";
 		try {
@@ -238,12 +255,42 @@ class InfectStatistic {
 	        	CP+=cp[i];
 	        	DP+=dp[i];
 	        }
-	        string="全国 感染患者"+IP+"人 疑似患者"+SP+"人 治愈"+CP+"人 死亡"+DP+"人\n";
-        	out.write(string); 
-	        for(int i=0;i<34;i++) {
-	        	string=province[i]+" 感染患者"+ip[i]+"人 疑似患者"+sp[i]+"人 治愈"+cp[i]+"人 死亡"+dp[i]+"人\n";
-	        	out.write(string); 
+	        if(quanguo==1) {
+	        	string="全国 ";
+    			if(grhz==1) {
+    				string+=("感染患者"+IP+"人 ");
+    			}
+    			if(yshz==1) {
+    				string+=("疑似患者"+SP+"人 ");
+    			}
+    			if(zy==1) {
+    				string+=("治愈"+CP+"人 ");
+    			}
+    			if(sw==1) {
+    				string+=("死亡"+DP+"人 ");
+    			}
+    			string+="\n";
+    			out.write(string);
 	        }
+        	for(int i=0;i<34;i++) {
+    			if(pro[i]==1) {
+    				string=(province[i]+" ");
+    				if(grhz==1) {
+        				string+=("感染患者"+ip[i]+"人 ");
+        			}
+        			if(yshz==1) {
+        				string+=("疑似患者"+sp[i]+"人 ");
+        			}
+        			if(zy==1) {
+        				string+=("治愈"+cp[i]+"人 ");
+        			}
+        			if(sw==1) {
+        				string+=("死亡"+dp[i]+"人 ");
+        			}
+        			string+="\n";
+    			    out.write(string);
+    			}
+    		}
 	        out.flush(); 
 	        out.close(); 
 	    } catch (Exception e) {
